@@ -42,7 +42,7 @@ with tf.device('/GPU:0'):
     DATA_PATH = 'D:/Facultate_ACE/Facultate_Anul_IV/ML/Fish_Dataset_Split'  
     SAVE_PATH = 'D:/Facultate_ACE/Facultate_Anul_IV/ML/'
 
-    #Early Stopping, when model stop to learn
+    #Early Stopping, when model stops to get better loss
     early_stop = EarlyStopping(
     monitor='val_loss',
     patience=4,

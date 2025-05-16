@@ -7,14 +7,13 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from tensorflow.keras.applications import InceptionV3
 from tensorflow.keras.models import Model
-from tensorflow.keras.layers import GlobalAveragePooling2D, Flatten, Dense, Dropout, BatchNormalization, Activation, PReLU
+from tensorflow.keras.layers import GlobalAveragePooling2D, Flatten, Dense, Dropout, BatchNormalization, Activation, PReLU, LeakyReLU
 import tensorflow.keras.optimizers as keras
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.optimizers.experimental import AdamW
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
+from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
 from sklearn.metrics import classification_report, confusion_matrix
-
 
 # GPU configuration
 gpus = tf.config.list_physical_devices('GPU')
@@ -38,17 +37,36 @@ with tf.device('/GPU:0'):
     BATCH_SIZE = 16
     EPOCHS = 20
     # Choose one of the datasets:
-    # Fish_Dataset_Split / FishImgDataset / FishImgDataset–modified / FishImgDataset_augmented_balanced
-    DATA_PATH = 'D:/Facultate_ACE/Facultate_Anul_IV/ML/Fish_Dataset_Split' 
+    # Fish_Dataset_Split / FishImgDataset / FishImgDataset–modified / FishImgDataset_augmented_balanced / FishImgDataset_augmented_balancedV2
+    DATA_PATH = 'D:/Facultate_ACE/Facultate_Anul_IV/ML/FishImgDataset_augmented_balancedV2' 
     SAVE_PATH = 'D:/Facultate_ACE/Facultate_Anul_IV/ML/'
     
-    #Early Stopping, when model stop to learn
+    #Early Stopping, when model stops to learn on validation
     early_stop = EarlyStopping(
-    monitor='val_loss',
-    patience=3,
-    restore_best_weights=True
+        monitor='val_accuracy',
+        patience=6,
+        restore_best_weights=True
     )
     
+    # Scheduler callback
+    lr_scheduler = ReduceLROnPlateau(
+        monitor='val_loss',
+        factor=0.2,
+        patience=3,
+        min_lr=1e-7,
+        verbose=1
+    ) 
+
+    # Checkpoint - save best model weights only
+    checkpoint = ModelCheckpoint(
+        filepath=SAVE_PATH + 'FishImgDataset_augmented_balancedV2_InceptionV3.weights.h5',  
+        monitor='val_accuracy',
+        save_best_only=True,
+        save_weights_only=True,
+        verbose=0
+    )
+
+
     # ImageDataGenerator setup without augmentation, but using manual split for train & validation
     train_gen = ImageDataGenerator(rescale=1./255).flow_from_directory(
         os.path.join(DATA_PATH, 'train'),
@@ -102,25 +120,24 @@ with tf.device('/GPU:0'):
     
     #Define model InceptionV3
     def build_inception_v3_model(input_shape=(224, 224, 3), num_classes=NUM_CLASSES, 
-                                  layer1=512, layer2=256, dropout_rate=0.4, lr=0.0001):
+                                  layer1=512, layer2=256, dropout_rate=0.3, lr=0.0001):
           model = InceptionV3(weights = 'imagenet', include_top=False, input_shape=(224, 224, 3))
-          #mark loaded layers as not trainable
-          model.trainable = False
+          #mark loaded layers as trainable
+          for layer in model.layers[-30:]:
+              layer.trainable = True
 
           x = GlobalAveragePooling2D()(model.output)
           x = BatchNormalization()(x)
           
           x = Dense(layer1)(x)
           x = BatchNormalization()(x)
-          x = PReLU()(x)
-          # x = Activation('relu')(x)
+          x = Activation('swish')(x)
           x = Dropout(dropout_rate)(x)
           
           x = Dense(layer2)(x)
           x = BatchNormalization()(x)
-          x = PReLU()(x)
-          # x = Activation('relu')(x)
-          x = Dropout(dropout_rate)(x)
+          x = Activation('swish')(x)
+          x = Dropout(dropout_rate + 0.2)(x)
           
           output = Dense(num_classes, activation='softmax')(x)
         
@@ -128,7 +145,7 @@ with tf.device('/GPU:0'):
           
           #compile model
           model.compile(loss='categorical_crossentropy',
-                        optimizer=AdamW(learning_rate=lr, decay=1e-6),
+                        optimizer=AdamW(learning_rate=lr),
                         metrics=['accuracy'])
           return model
     
@@ -140,7 +157,7 @@ with tf.device('/GPU:0'):
         train_gen,
         validation_data=val_gen,
         epochs=EPOCHS,
-        callbacks=[early_stop]
+        callbacks=[early_stop, lr_scheduler, checkpoint]
     )
     
     # Train the model with augmentation
@@ -171,15 +188,14 @@ with tf.device('/GPU:0'):
     
     plt.show()
 
-    # Save the model
+    # Save the model using JSON ans h5
     # Choose one of the datasets:
-    # Fish_Dataset_Split / FishImgDataset / FishImgDataset–modified / FishImgDataset_augmented_balanced
+    # Fish_Dataset_Split / FishImgDataset / FishImgDataset–modified / FishImgDataset_augmented_balanced / FishImgDataset_augmented_balancedV2
     model_json = model.to_json()
-    with open(SAVE_PATH + 'Fish_Dataset_Split_InceptionV3.json', 'w') as json_file:
+    with open(SAVE_PATH + 'FishImgDataset_augmented_balancedV2_InceptionV3.json', 'w') as json_file:
         json_file.write(model_json)
-    model.save_weights(SAVE_PATH + 'Fish_Dataset_Split_InceptionV3.weights.h5')
     print("Model saved to disk")
-    
+
     # Evaluate the model and print classification report for validation set
     # Prediction on validation
     y_pred = model.predict(val_gen, verbose=1)
