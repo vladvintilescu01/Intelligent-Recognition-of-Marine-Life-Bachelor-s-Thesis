@@ -37,8 +37,8 @@ with tf.device('/GPU:0'):
     BATCH_SIZE = 16
     EPOCHS = 20
     # Choose one of the datasets:
-    # Fish_Dataset_Split / FishImgDataset / FishImgDataset–modified / FishImgDataset_augmented_balanced / FishImgDataset_augmented_balancedV2
-    DATA_PATH = 'D:/Facultate_ACE/Facultate_Anul_IV/ML/FishImgDataset_augmented_balancedV2' 
+    # Fish_Dataset_Split / FishImgDataset / FishImgDataset–modified / FishImgDataset_augmented_balanced / FishImgDataset_augmented_balancedV2 / FishImgDataset_18_classes_augmented_balancedV2
+    DATA_PATH = 'D:/Facultate_ACE/Facultate_Anul_IV/ML/FishImgDataset_18_classes_augmented_balancedV2' 
     SAVE_PATH = 'D:/Facultate_ACE/Facultate_Anul_IV/ML/'
     
     #Early Stopping, when model stops to learn on validation
@@ -59,7 +59,7 @@ with tf.device('/GPU:0'):
 
     # Checkpoint - save best model weights only
     checkpoint = ModelCheckpoint(
-        filepath=SAVE_PATH + 'FishImgDataset_augmented_balancedV2_InceptionV3.weights.h5',  
+        filepath=SAVE_PATH + 'FishImgDataset_18_classes_augmented_balancedV2_InceptionV3.weights.h5',  
         monitor='val_accuracy',
         save_best_only=True,
         save_weights_only=True,
@@ -190,9 +190,9 @@ with tf.device('/GPU:0'):
 
     # Save the model using JSON ans h5
     # Choose one of the datasets:
-    # Fish_Dataset_Split / FishImgDataset / FishImgDataset–modified / FishImgDataset_augmented_balanced / FishImgDataset_augmented_balancedV2
+    # Fish_Dataset_Split / FishImgDataset / FishImgDataset–modified / FishImgDataset_augmented_balanced / FishImgDataset_augmented_balancedV2 / FishImgDataset_18_classes_augmented_balancedV2
     model_json = model.to_json()
-    with open(SAVE_PATH + 'FishImgDataset_augmented_balancedV2_InceptionV3.json', 'w') as json_file:
+    with open(SAVE_PATH + 'FishImgDataset_18_classes_augmented_balancedV2_InceptionV3.json', 'w') as json_file:
         json_file.write(model_json)
     print("Model saved to disk")
 

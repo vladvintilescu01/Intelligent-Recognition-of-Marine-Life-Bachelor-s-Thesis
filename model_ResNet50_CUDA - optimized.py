@@ -35,10 +35,10 @@ with tf.device('/GPU:0'):
     # Image and path settings
     IMG_HEIGHT, IMG_WIDTH, CHANNELS = 224, 224, 3
     BATCH_SIZE = 16
-    EPOCHS = 20
+    EPOCHS = 20 
     # Choose one of the datasets:
-    # Fish_Dataset_Split / FishImgDataset / FishImgDataset-modified / FishImgDataset_augmented_balanced / FishImgDataset_augmented_balancedV2
-    DATA_PATH = 'D:/Facultate_ACE/Facultate_Anul_IV/ML/Fish_Dataset_Split' 
+    # Fish_Dataset_Split / FishImgDataset / FishImgDataset-modified / FishImgDataset_augmented_balanced / FishImgDataset_augmented_balancedV2 / FishImgDataset_18_classes_augmented_balancedV2
+    DATA_PATH = 'D:/Facultate_ACE/Facultate_Anul_IV/ML/FishImgDataset_18_classes_augmented_balancedV2' 
     SAVE_PATH = 'D:/Facultate_ACE/Facultate_Anul_IV/ML/'
     
     #Early Stopping, when model stops to get better loss
@@ -102,10 +102,10 @@ with tf.device('/GPU:0'):
     # Model definition
     def build_resnet50_model(input_shape=(224, 224, 3), num_classes=NUM_CLASSES, 
                              layer1=256, layer2=128, dropout_rate=0.3, lr=0.00001):
-        base_model = ResNet50(weights='imagenet', include_top=False, input_shape=input_shape)
-        # Fine-tuning setup
+        base_model = ResNet50(weights = 'imagenet', include_top=False, input_shape=(224, 224, 3))
+        #mark loaded layers as trainable
         for layer in base_model.layers[-30:]:
-            layer.trainable = True
+          layer.trainable = True
         
         x = GlobalAveragePooling2D()(base_model.output)
         
@@ -168,11 +168,11 @@ with tf.device('/GPU:0'):
 
     # Save the model
     # Choose one of the datasets:
-    # Fish_Dataset_Split / FishImgDataset / FishImgDataset–modified / FishImgDataset_augmented_balanced / FishImgDataset_augmented_balancedV2
+    # Fish_Dataset_Split / FishImgDataset / FishImgDataset–modified / FishImgDataset_augmented_balanced / FishImgDataset_augmented_balancedV2 / FishImgDataset_18_classes_augmented_balancedV2
     model_json = model.to_json()
-    with open(SAVE_PATH + 'Fish_Dataset_Split_ResNet50.json', 'w') as json_file:
+    with open(SAVE_PATH + 'FishImgDataset_18_classes_augmented_balancedV2_ResNet50.json', 'w') as json_file:
         json_file.write(model_json)
-    model.save_weights(SAVE_PATH + 'Fish_Dataset_Split_ResNet50.weights.h5')
+    model.save_weights(SAVE_PATH + 'FishImgDataset_18_classes_augmented_balancedV2_ResNet50.weights.h5')
     print("Model saved to disk")
     
     # Evaluate the model and print classification report for validation set

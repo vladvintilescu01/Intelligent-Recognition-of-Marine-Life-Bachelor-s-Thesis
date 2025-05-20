@@ -36,16 +36,16 @@ with tf.device('/GPU:0'):
     # Image and path settings
     IMG_HEIGHT, IMG_WIDTH, CHANNELS = 224, 224, 3
     BATCH_SIZE = 16
-    EPOCHS = 30
+    EPOCHS = 30 
     # Choose one of the datasets:
-    # Fish_Dataset_Split / FishImgDataset / FishImgDataset–modified / FishImgDataset_augmented_balanced / FishImgDataset_augmented_balancedV2
-    DATA_PATH = 'D:/Facultate_ACE/Facultate_Anul_IV/ML/Fish_Dataset_Split'  
+    # Fish_Dataset_Split / FishImgDataset / FishImgDataset–modified / FishImgDataset_augmented_balanced / FishImgDataset_augmented_balancedV2 / FishImgDataset_18_classes_augmented_balancedV2
+    DATA_PATH = 'D:/Facultate_ACE/Facultate_Anul_IV/ML/FishImgDataset_18_classes_augmented_balancedV2'  
     SAVE_PATH = 'D:/Facultate_ACE/Facultate_Anul_IV/ML/'
 
     #Early Stopping, when model stops to get better loss
     early_stop = EarlyStopping(
     monitor='val_loss',
-    patience=4,
+    patience=3,
     restore_best_weights=True
     )
 
@@ -104,9 +104,8 @@ with tf.device('/GPU:0'):
     def build_densenet121_model(input_shape=(224, 224, 3), num_classes=NUM_CLASSES, 
                              layer1=512, layer2=256, dropout_rate=0.3, lr=0.00001):
       #load model
-      model = DenseNet121(weights='imagenet',include_top=False, input_shape=input_shape) 
-      
-      # Fine-tuning setup
+      model = DenseNet121(weights = 'imagenet', include_top=False, input_shape=(224, 224, 3))
+      #mark loaded layers as trainable
       for layer in model.layers[-90:]:
           layer.trainable = True
       
@@ -128,7 +127,7 @@ with tf.device('/GPU:0'):
       model = Model(inputs=model.inputs, outputs=output)
       #compile model
       model.compile(loss='categorical_crossentropy', 
-                    optimizer=AdamW(learning_rate=lr, decay=1e-6),
+                    optimizer=AdamW(learning_rate=lr),
                     metrics=['accuracy'])
     
       return model
@@ -175,11 +174,11 @@ with tf.device('/GPU:0'):
 
     # Save the model
     # Choose one of the datasets:
-    # Fish_Dataset_Split / FishImgDataset / FishImgDataset–modified / FishImgDataset_augmented_balanced
+    # Fish_Dataset_Split / FishImgDataset / FishImgDataset–modified / FishImgDataset_augmented_balanced / FishImgDataset_18_classes_augmented_balancedV2
     model_json = model.to_json()
-    with open(SAVE_PATH + 'Fish_Dataset_Split_DenseNet121.json', 'w') as json_file:
+    with open(SAVE_PATH + 'FishImgDataset_18_classes_augmented_balancedV2_DenseNet121.json', 'w') as json_file:
         json_file.write(model_json)
-    model.save_weights(SAVE_PATH + 'Fish_Dataset_Split_DenseNet121.weights.h5')
+    model.save_weights(SAVE_PATH + 'FishImgDataset_18_classes_augmented_balancedV2_DenseNet121.weights.h5')
     print("Model saved to disk")
     
     # Evaluate the model and print classification report for validation set

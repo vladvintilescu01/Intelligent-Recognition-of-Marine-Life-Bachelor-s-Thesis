@@ -5,10 +5,10 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator, img_to_arra
 from tqdm import tqdm
 
 # Paths
-original_dataset_path = 'D:/Facultate_ACE/Facultate_Anul_IV/ML/FishImgDataset/train'
-balanced_dataset_path = 'D:/Facultate_ACE/Facultate_Anul_IV/ML/FishImgDataset_augmented_balanced/train'
+original_dataset_path = 'D:/Facultate_ACE/Facultate_Anul_IV/ML/FishImgDataset - 18 classes/train'
+balanced_dataset_path = 'D:/Facultate_ACE/Facultate_Anul_IV/ML/FishImgDataset_18_classes_augmented_balancedV2/train'
 # Target number of images per class
-maximum_images_per_classes = 1000
+maximum_images_per_classes = 1050
 # Augmentation settings
 datagen = ImageDataGenerator(
     rotation_range = 4,

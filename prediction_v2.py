@@ -7,32 +7,32 @@ from keras.models import model_from_json, load_model
 # Define paths
 base_path = "D:/Facultate_ACE/Facultate_Anul_IV/ML/"
 # Choose one of the datasets:
-# Fish_Dataset_Split / FishImgDataset / FishImgDataset–modified / FishImgDataset_augmented_balanced /FishImgDataset_augmented_balancedV2
-test_folder = os.path.join(base_path, "FishImgDataset_augmented_balancedV2/test") 
+# Fish_Dataset_Split / FishImgDataset / FishImgDataset–modified / FishImgDataset_augmented_balanced /FishImgDataset_augmented_balancedV2 / FishImgDataset_18_classes_augmented_balancedV2
+test_folder = os.path.join(base_path, "Fish_Dataset_Split/test") 
 
 # Load model architecture using JSON and H5
 # Choose one of the datasets:
-# Fish_Dataset_Split / FishImgDataset / FishImgDataset–modified / FishImgDataset_augmented_balanced / FishImgDataset_augmented_balancedV2
+# Fish_Dataset_Split / FishImgDataset / FishImgDataset–modified / FishImgDataset_augmented_balanced / FishImgDataset_augmented_balancedV2 / FishImgDataset_18_classes_augmented_balancedV2
 # Choose one of the models:
 # Used for: _ResNet50.json / _DenseNet121.json / _InceptionV3.json
-with open(base_path + 'FishImgDataset_augmented_balancedV2_InceptionV3.json', 'r') as json_file:
+with open(base_path + 'All weights and structure from experiments/Fish_Dataset_Split_InceptionV3.json', 'r') as json_file:
     loaded_model_json = json_file.read()
 
 model = model_from_json(loaded_model_json)
 # Load model architecture using JSON and H5
 # Choose one of the datasets:
-# Fish_Dataset_Split / FishImgDataset / FishImgDataset–modified / FishImgDataset_augmented_balanced / FishImgDataset_augmented_balancedV2
+# Fish_Dataset_Split / FishImgDataset / FishImgDataset–modified / FishImgDataset_augmented_balanced / FishImgDataset_augmented_balancedV2 / FishImgDataset_18_classes_augmented_balancedV2
 # Choose one of the models:
 # _ResNet50.weights.h5 / _DenseNet121.weights.h5 / _InceptionV3.weights.h5
-model.load_weights(base_path + "FishImgDataset_augmented_balancedV2_InceptionV3.weights.h5") 
+model.load_weights(base_path + "All weights and structure from experiments/Fish_Dataset_Split_InceptionV3.weights.h5") 
 
 # First dataset, a more laborious environment
-# CLASSES = np.array(["Black Sea Sprat", "Gilt-Head Bream", "Hourse Mackerel", "Red Mullet",
-#                    "Red Sea Bream", "Sea Bass", "Shrimp", "Striped Red Mullet"])  
+CLASSES = np.array(["Black Sea Sprat", "Gilt-Head Bream", "Hourse Mackerel", "Red Mullet",
+                   "Red Sea Bream", "Sea Bass", "Shrimp", "Striped Red Mullet"])  
 
 # Second dataset, more diversity
-CLASSES = np.array(["Catfish", "Glass Perchlet", "Goby", "Gourami", 
-                    "Grass Carp", "Knifefish", "Silver Barb", "Tilapia"])
+# CLASSES = np.array(["Catfish", "Glass Perchlet", "Goby", "Gourami", 
+#                     "Grass Carp", "Knifefish", "Silver Barb", "Tilapia"])
 
 # Preprocess image
 def preprocess_image(img_path):
