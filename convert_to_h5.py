@@ -1,23 +1,32 @@
-from tensorflow.keras.models import model_from_json
+from tensorflow import keras
+import os
 
-# === Setări fișiere ===
-model_name = "Fish_Dataset_Split_DenseNet121"  # fără extensii
-base_path = "All weights and structure from experiments/"  # schimbă dacă ai alt folder
+# List of model base names to process
+model_bases = [
+    "FishImgDataset_augmented_balancedV2_DenseNet121",
+    "FishImgDataset_augmented_balancedV2_ResNet50",
+    "FishImgDataset_augmented_balancedV2_InceptionV3"
+]
 
-json_path = f"{base_path}{model_name}.json"
-weights_path = f"{base_path}{model_name}.weights.h5"
-output_path = f"{base_path}{model_name}_full.keras"
+# Path to the folder containing the models
+base_path = "All weights and structure from experiments"
 
-# === Încarcă arhitectura ===
-with open(json_path, "r") as json_file:
-    model_json = json_file.read()
+for base_name in model_bases:
+    print(f"\nProcessing model: {base_name}")
 
-model = model_from_json(model_json)
+    json_path = os.path.join(base_path, f"{base_name}.json")
+    weights_path = os.path.join(base_path, f"{base_name}.weights.h5")
+    h5_save_path = os.path.join(base_path, f"{base_name}_full.h5")
 
-# === Încarcă weights ===
-model.load_weights(weights_path)
+    # Load model architecture from JSON
+    with open(json_path, "r") as f:
+        model = keras.models.model_from_json(f.read())
 
-# === Salvează modelul complet într-un singur fișier .h5 ===
-model.save(output_path)
+    # Load weights
+    model.load_weights(weights_path)
 
-print(f"Model complet salvat ca: {output_path}")
+    # Save the complete model as a single .h5 file
+    model.save(h5_save_path)
+    print(f"Model saved as {h5_save_path}")
+
+print("\nAll models have been processed and saved as .h5 files!")

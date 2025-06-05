@@ -7,13 +7,11 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from tensorflow.keras.applications import ResNet101
 from tensorflow.keras.models import Model
-from tensorflow.keras.layers import GlobalAveragePooling2D, Flatten, Dense, Dropout, BatchNormalization, LeakyReLU, PReLU
+from tensorflow.keras.layers import GlobalAveragePooling2D, Dense, Dropout, BatchNormalization, PReLU
 from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.optimizers.experimental import AdamW
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
+from tensorflow.keras.callbacks import EarlyStopping
 from sklearn.metrics import classification_report, confusion_matrix
-
 
 # GPU configuration
 gpus = tf.config.list_physical_devices('GPU')
@@ -44,7 +42,7 @@ with tf.device('/GPU:0'):
     #Early Stopping, when model stops to get better loss
     early_stop = EarlyStopping(
     monitor='val_loss',
-    patience=6,
+    patience=3,
     restore_best_weights=True
     )
     
@@ -70,12 +68,12 @@ with tf.device('/GPU:0'):
     # ImageDataGenerator setup with augmentation, but using manual split for train & validation
     # train_datagen = ImageDataGenerator(
     #     rescale=1./255,
-    #     rotation_range = 4,
-    #     width_shift_range = 0.05,
-    #     height_shift_range = 0.05,
-    #     zoom_range = 0.04,
+    #     rotation_range = 10,
+    #     width_shift_range = 0.30,
+    #     height_shift_range = 0.30,
+    #     zoom_range = 0.30,
     #     horizontal_flip = True,
-    #     brightness_range = [0.5, 1.2],
+    #     brightness_range = [0.2, 1.5],
     #     fill_mode = 'nearest'
     # )
 
@@ -165,15 +163,6 @@ with tf.device('/GPU:0'):
     plt.legend()
     
     plt.show()
-
-    # Save the model
-    # Choose one of the datasets:
-    # Fish_Dataset_Split / FishImgDataset / FishImgDataset–modified / FishImgDataset_augmented_balanced / FishImgDataset_augmented_balancedV2
-    model_json = model.to_json()
-    with open(SAVE_PATH + 'FishImgDataset_augmented_balancedV2_ResNet101.json', 'w') as json_file:
-        json_file.write(model_json)
-    model.save_weights(SAVE_PATH + 'FishImgDataset_augmented_balancedV2_ResNet101.weights.h5')
-    print("Model saved to disk")
     
     # Evaluate the model and print classification report for validation set
     # Prediction on validation
@@ -201,3 +190,11 @@ with tf.device('/GPU:0'):
     plt.title("Confusion Matrix")
     plt.show()
 
+    # Save the model
+    # Choose one of the datasets:
+    # Fish_Dataset_Split / FishImgDataset / FishImgDataset–modified / FishImgDataset_augmented_balanced / FishImgDataset_augmented_balancedV2
+    model_json = model.to_json()
+    with open(SAVE_PATH + 'FishImgDataset_augmented_balancedV2_ResNet101.json', 'w') as json_file:
+        json_file.write(model_json)
+    model.save_weights(SAVE_PATH + 'FishImgDataset_augmented_balancedV2_ResNet101.weights.h5')
+    print("Model saved to disk")

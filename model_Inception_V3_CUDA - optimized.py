@@ -7,9 +7,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from tensorflow.keras.applications import InceptionV3
 from tensorflow.keras.models import Model
-from tensorflow.keras.layers import GlobalAveragePooling2D, Flatten, Dense, Dropout, BatchNormalization, Activation, PReLU, LeakyReLU
-import tensorflow.keras.optimizers as keras
-from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.layers import GlobalAveragePooling2D, Dense, Dropout, BatchNormalization, Activation
 from tensorflow.keras.optimizers.experimental import AdamW
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
@@ -89,12 +87,12 @@ with tf.device('/GPU:0'):
     # ImageDataGenerator setup with augmentation, but using manual split for train & validation
     # train_datagen = ImageDataGenerator(
     #     rescale=1./255,
-    #     rotation_range = 4,
-    #     width_shift_range = 0.05,
-    #     height_shift_range = 0.05,
-    #     zoom_range = 0.04,
+    #     rotation_range = 10,
+    #     width_shift_range = 0.30,
+    #     height_shift_range = 0.30,
+    #     zoom_range = 0.30,
     #     horizontal_flip = True,
-    #     brightness_range = [0.5, 1.2],
+    #     brightness_range = [0.2, 1.5],
     #     fill_mode = 'nearest'
     # )
 
@@ -188,14 +186,6 @@ with tf.device('/GPU:0'):
     
     plt.show()
 
-    # Save the model using JSON ans h5
-    # Choose one of the datasets:
-    # Fish_Dataset_Split / FishImgDataset / FishImgDataset–modified / FishImgDataset_augmented_balanced / FishImgDataset_augmented_balancedV2 / FishImgDataset_18_classes_augmented_balancedV2
-    model_json = model.to_json()
-    with open(SAVE_PATH + 'FishImgDataset_18_classes_augmented_balancedV2_InceptionV3.json', 'w') as json_file:
-        json_file.write(model_json)
-    print("Model saved to disk")
-
     # Evaluate the model and print classification report for validation set
     # Prediction on validation
     y_pred = model.predict(val_gen, verbose=1)
@@ -221,3 +211,11 @@ with tf.device('/GPU:0'):
     plt.ylabel("True")
     plt.title("Confusion Matrix")
     plt.show()
+    
+    # Save the model using JSON ans h5
+    # Choose one of the datasets:
+    # Fish_Dataset_Split / FishImgDataset / FishImgDataset–modified / FishImgDataset_augmented_balanced / FishImgDataset_augmented_balancedV2 / FishImgDataset_18_classes_augmented_balancedV2
+    model_json = model.to_json()
+    with open(SAVE_PATH + 'FishImgDataset_18_classes_augmented_balancedV2_InceptionV3.json', 'w') as json_file:
+        json_file.write(model_json)
+    print("Model saved to disk")
