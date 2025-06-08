@@ -12,7 +12,7 @@ Follow these steps to set up and run the demo application:
 
    Make sure you have Python 3.8.
 
-2. ** Create a Virtual Environment**
+2. **Create a Virtual Environment**
 
    To keep your dependencies organized, you can use a virtual environment:
    ```bash
