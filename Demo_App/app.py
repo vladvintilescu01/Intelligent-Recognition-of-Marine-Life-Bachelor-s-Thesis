@@ -44,25 +44,58 @@ LOADING_MESSAGES = [
 # --- CSS for buttons and details ---
 st.markdown("""
     <style>
-        .desc-box {
-            text-align: justify;
-            background: #20394d;
-            color: #fff;
-            width: 100%;
-            border-radius: 15px;
-            padding: 20px 32px;
-            font-size: 1.12em;
-            font-weight: 400;
-            margin-top: 0.1em;
-            margin-bottom: 1.3em;
-        }
+    .stApp {
+    background: linear-gradient(180deg, #0b1f3a 0%, #050c1a 100%);
+    background-attachment: fixed;
+    background-size: cover;
+    }
+    .desc-box {
+        text-align: justify;
+        background: rgba(32, 57, 77, 0.6);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        color: #e0f0ff;
+        width: 100%;
+        border-radius: 15px;
+        padding: 20px 32px;
+        font-size: 1.15em;
+        font-weight: 400;
+        margin-top: 0.1em;
+        margin-bottom: 1.3em;
+        transition: all 0.3s ease;
+    }
+
+    .desc-box:hover {
+        transform: scale(1.01);
+        background: rgba(32, 57, 77, 0.7);
+    }
+
+    @keyframes fadeInUp {
+      0% {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .prediction-box {
+        animation: fadeInUp 0.9s ease-out both;
+    }
     </style>
 """, unsafe_allow_html=True)
 
+st.markdown("""
+<link href="https://fonts.googleapis.com/css2?family=Merriweather+Sans:wght@600&display=swap" rel="stylesheet">
+""", unsafe_allow_html=True)
+
 st.markdown(
-    "<h1 style='text-align: center; color:#1f77b4; font-size:2.5em; white-space:nowrap; margin-bottom:1.3em;'>Intelligent Recognition of Marine Life</h1>",
+    "<h1 style='text-align: center; color:#1f77b4; font-family:\"Merriweather Sans\", sans-serif; font-size:2.4em; white-space:nowrap; margin-bottom:1.3em;'>Intelligent Recognition of Marine Life</h1>",
     unsafe_allow_html=True
 )
+
 
 st.markdown("""
 #### Fish that can be recognized by the models:
@@ -108,51 +141,52 @@ if uploaded_file:
             model = load_model_by_name(MODEL_META[model_selected]["file"])
             predicted_class, confidence = predict_image(model, image)
         st.markdown(
-            f"""
-            <div style="
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                margin-top: 0.3em;
-            ">
-            <div style="
-                background: #20394d;
-                border-radius: 16px;
-                box-shadow: 0 4px 30px 0 rgba(70,180,255,0.13);
-                padding: 38px 44px;
-                display: flex;
-                flex-direction: row;
-                gap: 40px;
-                min-width: 620px;
-            ">
-                <div style="
-                    background: #223045;
-                    border-radius: 10px;
-                    border: 2px solid #1f77b4;
-                    padding: 14px 28px;
-                    font-size: 1.15em;
-                    font-weight: 500;
-                    color: #fff;
-                    min-width: 275px;
-                    text-align: center;
-                ">
-                🧠 I <span style="color: #23c1ff">think</span> it's a <b><span style="color: #23c1ff">{predicted_class}</span></b>
-                </div>
-                <div style="
-                    background: #223045;
-                    border-radius: 10px;
-                    border: 2px solid #1f77b4;
-                    padding: 14px 28px;
-                    font-size: 1.15em;
-                    color: #23c1ff;
-                    min-width: 275px;
-                    text-align: center;
-                ">
-                📈 I am sure <b>{confidence:.2%}</b>
-                </div>
-            </div>
-            </div>
-            """, unsafe_allow_html=True
-        )
+    f"""
+    <div class="prediction-box" style="
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 0.3em;
+    ">
+    <div style="
+        background: #20394d;
+        border-radius: 16px;
+        box-shadow: 0 4px 30px 0 rgba(70,180,255,0.13);
+        padding: 38px 44px;
+        display: flex;
+        flex-direction: row;
+        gap: 40px;
+        min-width: 620px;
+    ">
+        <div style="
+            background: #223045;
+            border-radius: 10px;
+            border: 2px solid #1f77b4;
+            padding: 14px 28px;
+            font-size: 1.15em;
+            font-weight: 500;
+            color: #fff;
+            min-width: 275px;
+            text-align: center;
+        ">
+        🧠 I <span style="color: #23c1ff">think</span> it's a <b><span style="color: #23c1ff">{predicted_class}</span></b>
+        </div>
+        <div style="
+            background: #223045;
+            border-radius: 10px;
+            border: 2px solid #1f77b4;
+            padding: 14px 28px;
+            font-size: 1.15em;
+            color: #23c1ff;
+            min-width: 275px;
+            text-align: center;
+        ">
+        📈 I am sure <b>{confidence:.2%}</b>
+        </div>
+    </div>
+    </div>
+    """, unsafe_allow_html=True
+)
+
 else:
     st.info("Please upload an image to start prediction.")
