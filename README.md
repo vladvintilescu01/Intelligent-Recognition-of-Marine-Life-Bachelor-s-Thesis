@@ -1,6 +1,6 @@
 # Intelligent Recognition of Marine Life – Bachelor's Thesis
 
-This repository contains a demo application for marine species recognition using deep‑learning models (**ResNet50**, **DenseNet121**, **InceptionV3**) and a user‑friendly **Streamlit** interface.
+This repository contains the software architecture for marine species recognition using deep‑learning models (**ResNet50**, **DenseNet121**, **InceptionV3**) and a user‑friendly **Streamlit** interface.
 
 ---
 
